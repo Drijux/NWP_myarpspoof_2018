@@ -5,7 +5,11 @@
 ** main
 */
 
+#include "spoof.h"
+
 int main(int ac, char **av)
 {
-    return (0);
+    if (!handle_error(ac, av + 1))
+        return (FAILURE);
+    return (SUCCESS);
 }

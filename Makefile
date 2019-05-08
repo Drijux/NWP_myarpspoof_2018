@@ -5,11 +5,12 @@
 ## Makefile
 ##
 
-SRC=		src/main.c		\
+SRC=		src/main.c			\
+			src/handle_error.c
 
 OBJ=	$(SRC:.c=.o)
 
-NAME	=	myftp
+NAME	=	myARPspoof
 
 CC	=	gcc
 
