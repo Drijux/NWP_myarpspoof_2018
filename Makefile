@@ -7,7 +7,7 @@
 
 SRC=		src/main.c			\
 			src/handle_error.c 	\
-			src/init_arpspoof.c \
+			src/arpspoof.c \
 			src/hexatodeci.c 	\
 			src/print_func.c 	\
 			src/fill_function.c \

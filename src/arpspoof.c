@@ -11,12 +11,6 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include "spoof.h"
-// #include <netinet/in.h>
-// #include <sys/types.h>
-// #include <stdlib.h>
-// #include <linux/if_packet.h>
-// #include <net/if.h>
-// #include <netinet/ether.h>
 
 static bool arpspoof(int sd, int ifindex, struct ifreq *if_mac, char **av)
 {
@@ -31,7 +25,6 @@ static bool arpspoof(int sd, int ifindex, struct ifreq *if_mac, char **av)
     fill_sock_addr(&sock_addr, ifindex);
     fill_arp(&arp, ARP_REQUEST);
     fill_arp_send_target(&arp, av[0], av[1]);
-    // print_arp_packet(&arp, send_req);
     return (true);
 }
 

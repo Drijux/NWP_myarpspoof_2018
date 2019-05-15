@@ -13,7 +13,7 @@ int hexadecimalToDecimal(char *hexVal)
     int base = 1;
     int dec_val = 0;
 
-    for (int i= len - 1; i >= 0; --i) {
+    for (int i = len - 1; i >= 0; --i) {
         if (hexVal[i] >= '0' && hexVal[i] <= '9') {
             dec_val += (hexVal[i] - 48) * base;
             base = base * 16;

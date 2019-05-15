@@ -47,7 +47,7 @@ static bool check_add_arg(char **av)
 static bool first_arg(char **av)
 {
     if (gethostbyname(av[0]) == NULL || gethostbyname(av[1]) == NULL) {
-        printf("Error: %s: Bad IP\n","gethostbyname");
+        printf("Error: %s: Bad IP\n", "gethostbyname");
         return (false);
     }
     return (true);

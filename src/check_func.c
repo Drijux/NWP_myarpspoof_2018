@@ -10,7 +10,6 @@
 #include <sys/ioctl.h>
 #include "spoof.h"
 
-
 bool create_socket(int *sd, int domaine, int type, int protocol)
 {
     if ((*sd = socket(domaine, type, protocol)) == -1) {

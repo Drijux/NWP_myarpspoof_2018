@@ -20,11 +20,11 @@
 #define BUF_SIZE    1024
 #define MY_DEST_MAC 0xff
 
-#define HW_TYPE 1
+#define HW_TYPE     1
 #define IPV4_LENGTH 4
-#define MAC_LENGTH 6
+#define MAC_LENGTH  6
 #define ARP_REQUEST 0x01
-#define ARP_REPLY 0x02
+#define ARP_REPLY   0x02
 
 typedef struct arp_header_s {
     unsigned short hardware_type;
@@ -32,10 +32,10 @@ typedef struct arp_header_s {
     unsigned char hardware_len;
     unsigned char protocol_len;
     unsigned short opcode;
-    unsigned char sender_mac[6];
-    unsigned char sender_ip[4];
-    unsigned char target_mac[6];
-    unsigned char target_ip[4];
+    unsigned char sender_mac[MAC_LENGTH];
+    unsigned char sender_ip[IPV4_LENGTH];
+    unsigned char target_mac[MAC_LENGTH];
+    unsigned char target_ip[IPV4_LENGTH];
 } arp_header_t;
 
 bool create_socket(int *sd, int domaine, int type, int protocol);
