@@ -16,9 +16,9 @@ void fill_arp_send_target(arp_header_t *arp, char *sender, char *target)
 
     for (int i = 0; i < 4; ++i) {
         arp->sender_ip[i] = atoi(sender + ind_s);
-        ind_s = find_carac(sender, ind_s,'.') + 1;
+        ind_s = find_carac(sender, ind_s, '.') + 1;
         arp->target_ip[i] = atoi(target + ind_d);
-        ind_d = find_carac(target, ind_d,'.') + 1;
+        ind_d = find_carac(target, ind_d, '.') + 1;
     }
 }
 
