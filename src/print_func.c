@@ -28,7 +28,7 @@ static void fill_target_dest(arp_header_t *arp
     }
 }
 
-static void printbroadcast(int sd, struct ifreq *if_mac, char **av)
+static void printbroadcast(struct ifreq *if_mac, char **av)
 {
     char sendbuf[BUF_SIZE];
     struct ethhdr *send_req = (struct ethhdr *)sendbuf;
@@ -43,7 +43,7 @@ static void printbroadcast(int sd, struct ifreq *if_mac, char **av)
     print_arp_packet(&arp, send_req);
 }
 
-static void printspoof(int sd, struct ifreq *if_mac, char **av)
+static void printspoof(struct ifreq *if_mac, char **av)
 {
     char sendbuf[BUF_SIZE];
     struct ethhdr *send_req = (struct ethhdr *)sendbuf;
@@ -69,9 +69,9 @@ int print_function(char **av)
     if (!check_ioctl(sd, SIOCGIFHWADDR, &if_mac, av[2]))
         return (FAILURE);
     if (strcmp(av[3], "--printSpoof") == 0)
-        printspoof(sd, &if_mac, av);
+        printspoof(&if_mac, av);
     else
-        printbroadcast(sd, &if_mac, av);
+        printbroadcast(&if_mac, av);
     close(sd);
     return (SUCCESS);
 }
