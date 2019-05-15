@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "spoof.h"
 
 void fill_arp_send_target(arp_header_t *arp, char *sender, char *target)
@@ -27,13 +28,19 @@ void fill_arp_eth(struct ethhdr *send_req
     , struct sockaddr_ll *sock_addr
     , struct ifreq *if_mac)
 {
+    unsigned char save;
+
     for (int i = 0; i < 6; ++i) {
         send_req->h_dest[i] = MY_DEST_MAC;
         arp->target_mac[i] = MY_DEST_MAC;
         // arp->target_mac[i] = 0x00;
-        send_req->h_source[i] = ((uint8_t *)&if_mac->ifr_hwaddr.sa_data)[i];
-        arp->sender_mac[i] = ((uint8_t *)&if_mac->ifr_hwaddr.sa_data)[i];
-        sock_addr->sll_addr[i] = ((uint8_t *)&if_mac->ifr_hwaddr.sa_data)[i];
+        if (arp->mac_addr[i] == -1)
+            save = ((uint8_t *)&if_mac->ifr_hwaddr.sa_data)[i];
+        else
+            save = (uint8_t)arp->mac_addr[i];
+        send_req->h_source[i] = save;
+        arp->sender_mac[i] = save;
+        sock_addr->sll_addr[i] = save;
     }
     send_req->h_proto = htons(ETH_P_IP);
 }
@@ -50,11 +57,23 @@ void fill_sock_addr(struct sockaddr_ll *sock_addr, int ifindex)
     sock_addr->sll_addr[7] = 0x00;
 }
 
-void fill_arp(arp_header_t *arp, int opcode)
+void fill_arp(arp_header_t *arp, int opcode, char *mac_addr)
 {
+    int ind = 0;
+    char save[3];
+
     arp->hardware_type = HW_TYPE;
     arp->protocol_type = htons(ETH_P_IP);
     arp->hardware_len = MAC_LENGTH;
     arp->protocol_len = IPV4_LENGTH;
     arp->opcode = opcode;
+    for (int i = 0; i < 6; ++i) {
+        if (mac_addr == NULL)
+            arp->mac_addr[i] = -1;
+        else {
+            sprintf(save, "%s", strncpy(save, mac_addr + ind, 2));
+            arp->mac_addr[i] = hexadecimalToDecimal(save);
+            ind += 3;
+        }
+    }
 }

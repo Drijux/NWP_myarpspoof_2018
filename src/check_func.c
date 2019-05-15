@@ -10,9 +10,9 @@
 #include <sys/ioctl.h>
 #include "spoof.h"
 
-bool create_socket(int *sd, int domaine, int type, int protocol)
+bool create_socket(int *sd)
 {
-    if ((*sd = socket(domaine, type, protocol)) == -1) {
+    if ((*sd = socket(PF_PACKET, SOCK_RAW, IPPROTO_RAW)) == -1) {
         perror("Failed to create socket");
         return (false);
     }

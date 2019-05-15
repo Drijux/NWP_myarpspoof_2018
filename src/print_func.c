@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <netinet/ether.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
@@ -28,7 +29,7 @@ static void fill_target_dest(arp_header_t *arp
     }
 }
 
-static void printbroadcast(struct ifreq *if_mac, char **av)
+static void printbroadcast(struct ifreq *if_mac, char **av, char *mac_addr)
 {
     char sendbuf[BUF_SIZE];
     struct ethhdr *send_req = (struct ethhdr *)sendbuf;
@@ -36,14 +37,14 @@ static void printbroadcast(struct ifreq *if_mac, char **av)
     struct sockaddr_ll sock_addr;
 
     memset(sendbuf, 0, BUF_SIZE);
+    fill_arp(&arp, ARP_REQUEST, mac_addr);
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, 0);
-    fill_arp(&arp, ARP_REQUEST);
     fill_arp_send_target(&arp, av[0], av[1]);
     print_arp_packet(&arp, send_req);
 }
 
-static void printspoof(struct ifreq *if_mac, char **av)
+static void printspoof(struct ifreq *if_mac, char **av, char *mac_addr)
 {
     char sendbuf[BUF_SIZE];
     struct ethhdr *send_req = (struct ethhdr *)sendbuf;
@@ -51,9 +52,9 @@ static void printspoof(struct ifreq *if_mac, char **av)
     struct sockaddr_ll sock_addr;
 
     memset(sendbuf, 0, BUF_SIZE);
+    fill_arp(&arp, ARP_REPLY, mac_addr);
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, 0);
-    fill_arp(&arp, ARP_REPLY);
     fill_arp_send_target(&arp, av[0], av[1]);
     fill_target_dest(&arp, send_req, av[4]);
     print_arp_packet(&arp, send_req);
@@ -61,17 +62,16 @@ static void printspoof(struct ifreq *if_mac, char **av)
 
 int print_function(char **av)
 {
-    int sd = 0;
     struct ifreq if_mac;
+    char *mac_addr = calloc(18, sizeof(char));
 
-    if (!create_socket(&sd, PF_INET, SOCK_STREAM, 0))
+    if (mac_addr == NULL || !get_addr(av[2], &mac_addr))
         return (FAILURE);
-    if (!check_ioctl(sd, SIOCGIFHWADDR, &if_mac, av[2]))
-        return (FAILURE);
+    printf("%s\n", mac_addr);
     if (strcmp(av[3], "--printSpoof") == 0)
-        printspoof(&if_mac, av);
+        printspoof(&if_mac, av, mac_addr);
     else
-        printbroadcast(&if_mac, av);
-    close(sd);
+        printbroadcast(&if_mac, av, mac_addr);
+    free(mac_addr);
     return (SUCCESS);
 }

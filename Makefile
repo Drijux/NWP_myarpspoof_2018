@@ -13,7 +13,8 @@ SRC=		src/main.c			\
 			src/fill_function.c \
 			src/find_carac.c 	\
 			src/check_func.c 	\
-			src/print_arp.c
+			src/print_arp.c 	\
+			src/get_mac_addr.c
 
 OBJ=	$(SRC:.c=.o)
 
@@ -21,7 +22,7 @@ NAME	=	myARPspoof
 
 CC	=	gcc
 
-CFLAGS	=	-I./include -Wall -Wextra
+CFLAGS	+=	-I./include -Wall -Wextra
 
 all:    $(NAME)
 

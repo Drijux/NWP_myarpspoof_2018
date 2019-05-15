@@ -21,9 +21,9 @@ static bool arpspoof(int sd, int ifindex, struct ifreq *if_mac, char **av)
     struct sockaddr_ll sock_addr;
 
     memset(sendbuf, 0, BUF_SIZE);
+    fill_arp(&arp, ARP_REQUEST, NULL);
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, ifindex);
-    fill_arp(&arp, ARP_REQUEST);
     fill_arp_send_target(&arp, av[0], av[1]);
     return (true);
 }
@@ -36,7 +36,7 @@ int init_arpspoof(int ac, char **av)
 
     if (ac >= 5)
         return (print_function(av));
-    if (!create_socket(&sd, PF_PACKET, SOCK_RAW, IPPROTO_RAW))
+    if (!create_socket(&sd))
         return (FAILURE);
     if (!check_ioctl(sd, SIOCGIFINDEX, &if_mac, av[2]))
         return (FAILURE);

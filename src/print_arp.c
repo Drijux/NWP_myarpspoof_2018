@@ -21,8 +21,8 @@ void print_arp_packet(arp_header_t *arp, struct ethhdr *send_req)
     // printf("%02x ", arp->opcode);
 
     printf("%02x ", arp->protocol_type);
-    printf("%02x 00 ", arp->hardware_len);
-    printf("%02x ", arp->hardware_type);
+    printf("%02x ", arp->hardware_len);
+    printf("00 %02x ", arp->hardware_type);
     printf("%02x 00 ", arp->protocol_type);
     printf("%02x ", arp->hardware_len);
     printf("%02x ", arp->protocol_len);
