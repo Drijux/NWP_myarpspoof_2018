@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2019
-** myFTP
+** MYARPSPOOF
 ** File description:
-** main
+** main.c
 */
 
 #include "spoof.h"
@@ -11,5 +11,5 @@ int main(int ac, char **av)
 {
     if (!handle_error(ac, av + 1))
         return (FAILURE);
-    return (SUCCESS);
+    return (init_arpspoof(ac, av + 1));
 }

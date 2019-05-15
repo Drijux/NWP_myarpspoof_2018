@@ -1,2 +1,3 @@
-.o
+*.o
 myARPspoof
+test.c

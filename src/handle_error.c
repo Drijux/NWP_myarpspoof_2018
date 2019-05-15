@@ -11,7 +11,7 @@
 #include <ctype.h>
 #include "spoof.h"
 
-bool ismacaddr(char *str)
+static bool ismacaddr(char *str)
 {
     int cpt = 0;
 
@@ -29,7 +29,7 @@ bool ismacaddr(char *str)
     return (true);
 }
 
-bool check_add_arg(char **av)
+static bool check_add_arg(char **av)
 {
     if (strcmp(av[0], "--printSpoof") != 0
         && strcmp(av[0], "--printBroadcast") != 0) {
@@ -44,7 +44,7 @@ bool check_add_arg(char **av)
     return (true);
 }
 
-bool first_arg(char **av)
+static bool first_arg(char **av)
 {
     if (gethostbyname(av[0]) == NULL || gethostbyname(av[1]) == NULL) {
         printf("Error: %s: Bad IP\n","gethostbyname");
