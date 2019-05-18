@@ -12,7 +12,7 @@
 
 bool create_socket(int *sd)
 {
-    if ((*sd = socket(PF_PACKET, SOCK_RAW, IPPROTO_RAW)) == -1) {
+    if ((*sd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1) {
         perror("Failed to create socket");
         return (false);
     }

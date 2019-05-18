@@ -16,9 +16,9 @@ void fill_arp_send_target(arp_header_t *arp, char *sender, char *target)
     int ind_d = 0;
 
     for (int i = 0; i < 4; ++i) {
-        arp->sender_ip[i] = atoi(sender + ind_s);
+        arp->sender_ip[i] = (unsigned char)atoi(sender + ind_s);
         ind_s = find_carac(sender, ind_s, '.') + 1;
-        arp->target_ip[i] = atoi(target + ind_d);
+        arp->target_ip[i] = (unsigned char)atoi(target + ind_d);
         ind_d = find_carac(target, ind_d, '.') + 1;
     }
 }
@@ -31,13 +31,12 @@ void fill_arp_eth(struct ethhdr *send_req
     unsigned char save;
 
     for (int i = 0; i < 6; ++i) {
-        send_req->h_dest[i] = MY_DEST_MAC;
-        arp->target_mac[i] = MY_DEST_MAC;
+        send_req->h_dest[i] = (unsigned char)MY_DEST_MAC;
+        arp->target_mac[i] = (unsigned char)0x00;
         // arp->target_mac[i] = 0x00;
-        if (arp->mac_addr[i] == -1)
-            save = ((uint8_t *)&if_mac->ifr_hwaddr.sa_data)[i];
-        else
-            save = (uint8_t)arp->mac_addr[i];
+        save = arp->mac_addr[i] == -1
+            ? (unsigned char)if_mac->ifr_hwaddr.sa_data[i]
+            : (unsigned char)arp->mac_addr[i];
         send_req->h_source[i] = save;
         arp->sender_mac[i] = save;
         sock_addr->sll_addr[i] = save;
@@ -57,7 +56,7 @@ void fill_sock_addr(struct sockaddr_ll *sock_addr, int ifindex)
     sock_addr->sll_addr[7] = 0x00;
 }
 
-void fill_arp(arp_header_t *arp, int opcode, char *mac_addr)
+void fill_arp(arp_header_t *arp, int opcode, char *mac_addr, int opt)
 {
     int ind = 0;
     char save[3];
@@ -66,7 +65,7 @@ void fill_arp(arp_header_t *arp, int opcode, char *mac_addr)
     arp->protocol_type = htons(ETH_P_IP);
     arp->hardware_len = MAC_LENGTH;
     arp->protocol_len = IPV4_LENGTH;
-    arp->opcode = opcode;
+    arp->opcode = opt == 1 ? opcode : htons(opcode);
     for (int i = 0; i < 6; ++i) {
         if (mac_addr == NULL)
             arp->mac_addr[i] = -1;

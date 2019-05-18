@@ -37,7 +37,7 @@ static void printbroadcast(struct ifreq *if_mac, char **av, char *mac_addr)
     struct sockaddr_ll sock_addr;
 
     memset(sendbuf, 0, BUF_SIZE);
-    fill_arp(&arp, ARP_REQUEST, mac_addr);
+    fill_arp(&arp, ARP_REQUEST, mac_addr, 1);
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, 0);
     fill_arp_send_target(&arp, av[0], av[1]);
@@ -52,7 +52,7 @@ static void printspoof(struct ifreq *if_mac, char **av, char *mac_addr)
     struct sockaddr_ll sock_addr;
 
     memset(sendbuf, 0, BUF_SIZE);
-    fill_arp(&arp, ARP_REPLY, mac_addr);
+    fill_arp(&arp, ARP_REPLY, mac_addr, 1);
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, 0);
     fill_arp_send_target(&arp, av[0], av[1]);

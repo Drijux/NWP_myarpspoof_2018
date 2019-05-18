@@ -25,6 +25,8 @@
 #define MAC_LENGTH  6
 #define ARP_REQUEST 0x01
 #define ARP_REPLY   0x02
+#define ETH2_HEADER_LEN 14
+#define PROTO_ARP 0x0806
 
 typedef struct arp_header_s {
     unsigned short hardware_type;
@@ -49,7 +51,7 @@ int find_carac(char *str, int index, char carac);
 void print_arp_packet(arp_header_t *arp, struct ethhdr *send_req);
 int init_arpspoof(int ac, char **av);
 void fill_arp_send_target(arp_header_t *arp, char *sender, char *target);
-void fill_arp(arp_header_t *arp, int opcode, char *mac_addr);
+void fill_arp(arp_header_t *arp, int opcode, char *mac_addr, int opt);
 void fill_sock_addr(struct sockaddr_ll *sock_addr, int ifindex);
 void fill_arp_eth(struct ethhdr *send_req
     , arp_header_t *arp
