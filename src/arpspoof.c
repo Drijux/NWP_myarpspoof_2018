@@ -70,7 +70,7 @@ static void arpspoof(int sd, int ifindex, struct ifreq *if_mac, char **av)
     send_arp(sd, &sock_addr, buf);
     receiv_arp(sd, arp, send_req);
     while (true) {
-        printf("Spoofed packet sent to '%s\n", );
+        // printf("Spoofed packet sent to '%s\n", );
         send_arp(sd, &sock_addr, buf);
         sleep(1);
     }
