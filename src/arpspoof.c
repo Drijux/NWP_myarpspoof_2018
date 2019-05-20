@@ -49,6 +49,7 @@ static void receiv_arp(int sd, arp_header_t *arp, struct ethhdr *send_req)
                 if (i < 5)
                     printf(":");
             }
+            printf("'\n");
             arp->opcode = htons(ARP_REPLY);
             break;
         }

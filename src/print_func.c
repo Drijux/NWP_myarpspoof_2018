@@ -41,6 +41,7 @@ static void printbroadcast(struct ifreq *if_mac, char **av, char *mac_addr)
     fill_arp_eth(send_req, &arp, &sock_addr, if_mac);
     fill_sock_addr(&sock_addr, 0);
     fill_arp_send_target(&arp, av[0], av[1]);
+    fill_target_dest(&arp, send_req, BROADCAST);
     print_arp_packet(&arp, send_req);
 }
 

@@ -27,6 +27,7 @@
 #define ARP_REPLY   0x02
 #define ETH2_HEADER_LEN 14
 #define PROTO_ARP 0x0806
+#define BROADCAST "FF:FF:FF:FF:FF:FF"
 
 typedef struct arp_header_s {
     unsigned short hardware_type;
