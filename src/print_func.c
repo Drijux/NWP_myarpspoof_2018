@@ -67,7 +67,6 @@ int print_function(char **av)
 
     if (mac_addr == NULL || !get_addr(av[2], &mac_addr))
         return (FAILURE);
-    printf("%s\n", mac_addr);
     if (strcmp(av[3], "--printSpoof") == 0)
         printspoof(&if_mac, av, mac_addr);
     else
