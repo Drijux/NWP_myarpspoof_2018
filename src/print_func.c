@@ -23,8 +23,8 @@ static void fill_target_dest(arp_header_t *arp
 
     for (int i = 0; i < 6; ++i) {
         sprintf(save, "%s", strncpy(save, value + ind, 2));
-        send_req->h_dest[i] = hexadecimalToDecimal(save);
-        arp->target_mac[i] = hexadecimalToDecimal(save);
+        send_req->h_dest[i] = hexa_to_decimal(save);
+        arp->target_mac[i] = hexa_to_decimal(save);
         ind += 3;
     }
 }

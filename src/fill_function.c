@@ -33,7 +33,6 @@ void fill_arp_eth(struct ethhdr *send_req
     for (int i = 0; i < 6; ++i) {
         send_req->h_dest[i] = (unsigned char)MY_DEST_MAC;
         arp->target_mac[i] = (unsigned char)0x00;
-        // arp->target_mac[i] = 0x00;
         save = arp->mac_addr[i] == -1
             ? (unsigned char)if_mac->ifr_hwaddr.sa_data[i]
             : (unsigned char)arp->mac_addr[i];
@@ -71,7 +70,7 @@ void fill_arp(arp_header_t *arp, int opcode, char *mac_addr, int opt)
             arp->mac_addr[i] = -1;
         else {
             sprintf(save, "%s", strncpy(save, mac_addr + ind, 2));
-            arp->mac_addr[i] = hexadecimalToDecimal(save);
+            arp->mac_addr[i] = hexa_to_decimal(save);
             ind += 3;
         }
     }

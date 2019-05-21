@@ -7,7 +7,7 @@
 
 #include <string.h>
 
-int hexadecimalToDecimal(char *hexVal)
+int hexa_to_decimal(char *hexVal)
 {
     int len = strlen(hexVal);
     int base = 1;

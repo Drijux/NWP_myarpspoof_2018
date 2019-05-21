@@ -14,7 +14,8 @@ SRC=		src/main.c			\
 			src/find_carac.c 	\
 			src/check_func.c 	\
 			src/print_arp.c 	\
-			src/get_mac_addr.c
+			src/get_mac_addr.c 	\
+			src/snd_rcv_func.c
 
 OBJ=	$(SRC:.c=.o)
 
