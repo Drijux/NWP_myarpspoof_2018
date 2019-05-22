@@ -35,17 +35,16 @@ void send_arp(int sd, infohdr_t *send)
 void receiv_arp(int sd, infohdr_t *fsend, infohdr_t *rcv, char **av)
 {
     infohdr_t lsend;
-    int ret = 0;
 
     rcv->eth = (struct ethhdr *)rcv->buf;
     rcv->arp = (arp_header_t *)(rcv->buf + ETH2_HEADER_LEN);
     memset(rcv->buf, 0x00, BUF_SIZE);
     while (true) {
-        if ((ret = recvfrom(sd, rcv->buf, BUF_SIZE, 0, NULL, NULL)) == -1) {
+        if (recvfrom(sd, rcv->buf, BUF_SIZE, 0, NULL, NULL) == -1) {
             perror("Failed recvfrom");
             exit(FAILURE);
         }
-        if(htons(rcv->eth->h_proto) == PROTO_ARP) {
+        if (htons(rcv->eth->h_proto) == PROTO_ARP) {
             print_victime(rcv->arp);
             prepare_last_send(rcv, fsend, &lsend, av);
             loop_send(sd, &lsend, av);

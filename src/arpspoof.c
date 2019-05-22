@@ -16,7 +16,7 @@
 void print_victime(arp_header_t *arp_rep)
 {
     printf("Found victim's MAC address: '");
-    for(int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 6; ++i) {
         printf("%02X", arp_rep->sender_mac[i]);
         if (i < 5)
             printf(":");
