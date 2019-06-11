@@ -7,15 +7,13 @@
 
 SRC=		src/main.c			\
 			src/handle_error.c 	\
-			src/arpspoof.c \
-			src/hexatodeci.c 	\
-			src/print_func.c 	\
+			src/arpspoof.c 		\
 			src/fill_function.c \
-			src/find_carac.c 	\
-			src/check_func.c 	\
-			src/print_arp.c 	\
 			src/get_mac_addr.c 	\
+			src/check_func.c 	\
+			src/print_struct.c 	\
 			src/snd_rcv_func.c
+
 
 OBJ=	$(SRC:.c=.o)
 
@@ -24,6 +22,7 @@ NAME	=	myARPspoof
 CC	=	gcc
 
 CFLAGS	+=	-I./include -Wall -Wextra
+# CFLAGS	+=	-I./test_arp -Wall -Wextra
 
 all:    $(NAME)
 
